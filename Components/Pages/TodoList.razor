@@ -1,0 +1,54 @@
+@page "/todo-list"
+@rendermode InteractiveServer
+
+@inject TodoService TodoService
+@inject SessionService SessionService
+
+<PageTitle>Todo list</PageTitle>
+
+<h1>Todo list</h1>
+
+@if (todos == null)
+{
+    <p>Loading ...</p>
+}
+else
+{
+    <ul>
+        @foreach (var todo in todos)
+        {
+            <li>@todo.Name (@todo.Assignee.Username)</li>
+        }
+    </ul>
+}
+
+@if (user != null)
+{
+    <input type="text" @bind="Name" required />
+    <textarea @bind="Description"></textarea>
+    <button @onclick="HandleAddTodoButtonClick">Add todo</button>
+}
+
+@code {
+    private User user;
+    private List<TodoItem> todos;
+
+    private string Name = "";
+    private string Description = "";
+
+    protected override void OnInitialized()
+    {
+        user = SessionService.GetUser();
+        todos = TodoService.GetList();
+    }
+    public void HandleAddTodoButtonClick() {
+        if (user != null && Name != null && Name.Length > 0) {
+            TodoService.Add(new TodoItem{
+                Name = Name,
+                Description = Description,
+                Assignee = user,
+                CreatedAt = DateTime.Now,
+            });
+        }
+    }
+}

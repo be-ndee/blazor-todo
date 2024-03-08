@@ -1,0 +1,27 @@
+@page "/login"
+@rendermode InteractiveServer
+
+@inject SessionService SessionService
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+<input type="text" @bind="username" />
+<button @onclick="HandleLoginButtonClick">Login</button>
+
+@code {
+    private string username = "";
+
+    protected override void OnInitialized()
+    {
+        User user = SessionService.GetUser();
+        if (user != null) {
+            username = user.Username;
+        }
+    }
+    public void HandleLoginButtonClick()
+    {
+        SessionService.Login(username);
+    }
+}
