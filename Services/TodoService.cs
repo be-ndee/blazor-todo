@@ -5,8 +5,11 @@ namespace blazor_todo.Services
     public class TodoService
     {
         private List<TodoItem> todos = new List<TodoItem>([]);
-        public List<TodoItem> GetList()
+        public List<TodoItem> GetList(bool OnlyOpen = false)
         {
+            if (OnlyOpen) {
+                return todos.FindAll(todo => !todo.IsDone);
+            }
             return todos;
         }
 

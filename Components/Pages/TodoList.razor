@@ -8,6 +8,15 @@
 
 <h1>Todo list</h1>
 
+@if (showOnlyOpen)
+{
+    <button @onclick="ToggleShowOnlyOpenFilter">Show all</button>
+}
+else
+{
+    <button @onclick="ToggleShowOnlyOpenFilter">Show only open</button>
+}
+
 @if (todos == null)
 {
     <p>Loading ...</p>
@@ -17,7 +26,7 @@ else
     <ul>
         @foreach (var todo in todos)
         {
-            <li>@todo.Name (@todo.Assignee.Username)</li>
+            <li>@todo.CreatedAt :: @todo.Name (@todo.Assignee.Username) <input type="checkbox" @bind="todo.IsDone" /></li>
         }
     </ul>
 }
@@ -30,6 +39,7 @@ else
 }
 
 @code {
+    private bool showOnlyOpen = false;
     private User user;
     private List<TodoItem> todos;
 
@@ -39,7 +49,13 @@ else
     protected override void OnInitialized()
     {
         user = SessionService.GetUser();
-        todos = TodoService.GetList();
+        todos = TodoService.GetList(showOnlyOpen);
+    }
+
+    public void ToggleShowOnlyOpenFilter()
+    {
+        showOnlyOpen = !showOnlyOpen;
+        todos = TodoService.GetList(showOnlyOpen);
     }
     public void HandleAddTodoButtonClick() {
         if (user != null && Name != null && Name.Length > 0) {
