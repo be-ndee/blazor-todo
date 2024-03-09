@@ -1,9 +1,6 @@
-namespace blazor_todo.Models
+namespace blazor_todo.Models;
+
+public class User
 {
-    public class User
-    {
-        public string Username { get; set; }
-    }
+    public string Username { get; set; }
 }
-
-

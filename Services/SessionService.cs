@@ -1,20 +1,18 @@
 using blazor_todo.Models;
 
-namespace blazor_todo.Services
+namespace blazor_todo.Services;
+
+public class SessionService
 {
-    public class SessionService
+    private User user;
+
+    public void Login(string username)
     {
-        private User user;
+        user = new User { Username = username };
+    }
 
-        public void Login(string username)
-        {
-            user = new User{Username = username};
-        }
-
-        public User GetUser()
-        {
-            return user;
-        }
+    public User GetUser()
+    {
+        return user;
     }
 }
-
