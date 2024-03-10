@@ -6,9 +6,9 @@ public class SessionService
 {
     private User user;
 
-    public void Login(string username)
+    public void Login(User loginUser)
     {
-        user = new User { Username = username };
+        user = loginUser;
     }
 
     public User GetUser()

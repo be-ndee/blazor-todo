@@ -1,27 +1,65 @@
 @page "/login"
 @rendermode InteractiveServer
 
-@inject SessionService SessionService
+@inject SessionService sessionService
+@inject UserService userService
 
 <PageTitle>Login</PageTitle>
 
 <h1>Login</h1>
 
 <input type="text" @bind="username" />
-<button @onclick="HandleLoginButtonClick">Login</button>
+<button @onclick="() => HandleLoginButtonClick()">Login User</button>
+
+@if (message != null)
+{
+    <p>@message</p>
+}
+
+<h1>Existing Users</h1>
+
+<ul>
+    @foreach (var user in users)
+    {
+        <li>@user.Username</li>
+    }
+</ul>
 
 @code {
+    private List<User> users = new List<User>([]);
+
     private string username = "";
 
-    protected override void OnInitialized()
+    private string message = null;
+
+
+    protected async override Task OnInitializedAsync()
     {
-        User user = SessionService.GetUser();
-        if (user != null) {
-            username = user.Username;
-        }
+        users = await userService.GetAllAsync();
     }
-    public void HandleLoginButtonClick()
+    public async Task HandleLoginButtonClick()
     {
-        SessionService.Login(username);
+
+        if (username.Length > 0)
+        {
+            User user = await userService.GetByUsernameAsync(username);
+            if (user != null)
+            {
+                message = "Logged in.";
+                sessionService.Login(user);
+            }
+            else
+            {
+                User newUser = new User { Username = username };
+                await userService.CreateAsync(newUser);
+                sessionService.Login(newUser);
+                message = "User created and logged in.";
+                await OnInitializedAsync();
+            }
+        }
+        else
+        {
+            message = "Username must not be empty.";
+        }
     }
 }

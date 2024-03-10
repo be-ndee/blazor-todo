@@ -1,11 +1,14 @@
 using blazor_todo.Components;
 using blazor_todo.Services;
+using blazor_todo.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("Database"));
+
+builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<SessionService>();
 builder.Services.AddSingleton<TodoService>();
 
