@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("Database"));
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<SessionService>();
 builder.Services.AddSingleton<TodoService>();

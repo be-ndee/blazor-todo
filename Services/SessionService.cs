@@ -4,14 +4,14 @@ namespace blazor_todo.Services;
 
 public class SessionService
 {
-    private User user;
+    private User? user;
 
     public void Login(User loginUser)
     {
         user = loginUser;
     }
 
-    public User GetUser()
+    public User? GetUser()
     {
         return user;
     }

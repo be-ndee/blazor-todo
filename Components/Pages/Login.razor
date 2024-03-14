@@ -30,19 +30,18 @@
 
     private string username = "";
 
-    private string message = null;
+    private string? message = null;
 
 
     protected async override Task OnInitializedAsync()
     {
-        users = await userService.GetAllAsync();
+        users = (await userService.GetAllAsync()) ?? new List<User>([]);
     }
     public async Task HandleLoginButtonClick()
     {
-
         if (username.Length > 0)
         {
-            User user = await userService.GetByUsernameAsync(username);
+            User? user = await userService.GetByUsernameAsync(username);
             if (user != null)
             {
                 message = "Logged in.";

@@ -1,8 +1,8 @@
 @page "/todo-list"
 @rendermode InteractiveServer
 
-@inject TodoService TodoService
-@inject SessionService SessionService
+@inject TodoService todoService
+@inject SessionService sessionService
 
 <PageTitle>Todo list</PageTitle>
 
@@ -26,7 +26,7 @@ else
     <ul>
         @foreach (var todo in todos)
         {
-            <li>@todo.CreatedAt :: @todo.Name (@todo.Assignee.Username) <input type="checkbox" @bind="todo.IsDone" /></li>
+            <li>@todo.CreatedAt :: @todo.Name <input type="checkbox" @bind="todo.IsDone" /></li>
         }
     </ul>
 }
@@ -39,29 +39,30 @@ else
 
 @code {
     private bool showOnlyOpen = false;
-    private User user;
-    private List<TodoItem> todos;
+    private User? user;
+    private List<TodoItem>? todos;
 
     private string Name = "";
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        user = SessionService.GetUser();
-        todos = TodoService.GetList(showOnlyOpen);
+        user = sessionService.GetUser();
+        todos = await todoService.GetListAsync() ?? new List<TodoItem>([]);
     }
 
-    public void ToggleShowOnlyOpenFilter()
+    public async Task ToggleShowOnlyOpenFilter()
     {
         showOnlyOpen = !showOnlyOpen;
-        todos = TodoService.GetList(showOnlyOpen);
+        await OnInitializedAsync();
     }
-    public void HandleAddTodoButtonClick() {
+    public async Task HandleAddTodoButtonClick() {
         if (user != null && Name != null && Name.Length > 0) {
-            TodoService.Add(new TodoItem{
+            await todoService.CreateAsync(new TodoItem{
                 Name = Name,
-                Assignee = user,
+                AssigneeUserId = -1,
                 CreatedAt = DateTime.Now,
             });
+            await OnInitializedAsync();
         }
     }
 }

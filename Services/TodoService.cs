@@ -2,20 +2,13 @@ using blazor_todo.Models;
 
 namespace blazor_todo.Services;
 
-public class TodoService
+public class TodoService(IConfiguration configuration, HttpClient httpClient)
 {
-    private List<TodoItem> todos = new List<TodoItem>([]);
-    public List<TodoItem> GetList(bool OnlyOpen = false)
-    {
-        if (OnlyOpen)
-        {
-            return todos.FindAll(todo => !todo.IsDone);
-        }
-        return todos;
-    }
+    private HttpClient Http { get; set; } = httpClient;
+    private readonly string serviceEndpoint = $"{configuration.GetValue<string>("BackendUrl")}/TodoItems";
 
-    public void Add(TodoItem todoItem)
-    {
-        todos.Add(todoItem);
-    }
+
+    public Task<List<TodoItem>?> GetListAsync() => Http.GetFromJsonAsync<List<TodoItem>>(serviceEndpoint);
+
+    public Task CreateAsync(TodoItem todoItem) => Http.PostAsJsonAsync(serviceEndpoint, todoItem);
 }
